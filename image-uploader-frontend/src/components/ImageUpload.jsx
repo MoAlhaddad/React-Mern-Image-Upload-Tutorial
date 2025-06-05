@@ -4,12 +4,22 @@ import axios from "axios";
 const ImageUpload = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   const handleFileChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setImage(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleUpload = async (e) => {
@@ -29,11 +39,12 @@ const ImageUpload = () => {
           base64: base64Image,
         });
 
-        console.log(res.data);
-        setUploadedImageUrl(res.data.imageUrl); // Set the image URL from the response
+        console.log("Upload response:", res.data);
+        setUploadedImageUrl(res.data.imageUrl || res.data.data?.imageUrl || "");
         setMessage("✅ Upload successful!");
         setTitle("");
         setImage(null);
+        setPreviewImage("");
       } catch (err) {
         console.error(err);
         setMessage("❌ Upload failed.");
@@ -65,10 +76,22 @@ const ImageUpload = () => {
 
       {message && <p>{message}</p>}
 
+      {previewImage && (
+        <div style={{ marginTop: "1rem" }}>
+          <h4>🔍 Preview:</h4>
+          <img src={previewImage} alt="Preview" style={{ maxWidth: "100%" }} />
+        </div>
+      )}
+
       {uploadedImageUrl && (
         <div style={{ marginTop: "1rem" }}>
           <h4>🎉 Uploaded Image:</h4>
-          <img src={uploadedImageUrl} alt="Uploaded" style={{ maxWidth: "100%" }} />
+          <img
+            src={uploadedImageUrl}
+            alt="Uploaded"
+            style={{ maxWidth: "100%" }}
+            className="mt-2 max-w-xs rounded-lg border border-gray-300"
+          />
         </div>
       )}
     </div>
@@ -76,4 +99,3 @@ const ImageUpload = () => {
 };
 
 export default ImageUpload;
-
