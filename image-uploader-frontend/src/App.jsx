@@ -1,11 +1,20 @@
-import ImageUpload from "./components/ImageUpload";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Upload from "./pages/Upload";
+import Home from "./pages/Home";
 
 function App() {
   return (
-    <div>
-      <h1>📦 Image Upload App</h1>
-      <ImageUpload />
-    </div>
+    <>
+      <Navbar />
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/upload" element={<Upload />} />
+        </Routes>
+      </main>
+    </>
   );
 }
 
